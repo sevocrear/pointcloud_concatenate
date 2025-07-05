@@ -31,8 +31,8 @@ rosdep install --from-paths src --ignore-src -r -y
 This node is intended to be included as a part of a larger launch file.
 And example launch file is provided.
 
-* `concat.launch`  
-  A sample launch file which highlights the necessary parameters and topics.  
+* `concat.launch`
+  A sample launch file which highlights the necessary parameters and topics.
   Launches a node which subscribes to 3 pointclouds, concatenates them and publishes the
   concatenated pointcloud in frame `base_link` at a frequency of 10 Hz.
 
@@ -42,31 +42,35 @@ The package uses the following topics, which should be remapped to suit your imp
 
 #### Publishers
 
-* `cloud_out` - [`sensor_msgs/PointCloud2`]  
+* `cloud_out` - [`sensor_msgs/PointCloud2`]
   The concatenated pointcloud.
 
 #### Subscribers
 
-* `cloud_in1` - [`sensor_msgs/PointCloud2`]  
+* `cloud_in1` - [`sensor_msgs/PointCloud2`]
   The first pointcloud to add to the output.
-* `cloud_in2` - [`sensor_msgs/PointCloud2`]  
+* `cloud_in2` - [`sensor_msgs/PointCloud2`]
   The second pointcloud to add to the output.
-* `cloud_in3` - [`sensor_msgs/PointCloud2`]  
+* `cloud_in3` - [`sensor_msgs/PointCloud2`]
   The third pointcloud to add to the output.
-* `cloud_in4` - [`sensor_msgs/PointCloud2`]  
+* `cloud_in4` - [`sensor_msgs/PointCloud2`]
   The fourth pointcloud to add to the output.
 
 ### **ROS parameters**
 
-* `clouds` - [integer]  
-  Sets the number of pointclouds to concatenate.  
+* `clouds` - [integer]
+  Sets the number of pointclouds to concatenate.
   Default value: `2`.
-* `target_frame` - [a valid frame_id]  
-  Sets the frame_id which the pointclouds will be collected in before concatenation.  
-  `cloud_out` will be in this frame.  
+* `target_frame` - [a valid frame_id]
+  Sets the frame_id which the pointclouds will be collected in before concatenation.
+  `cloud_out` will be in this frame.
   Default value: `base_link`.
-* `hz` - [double]  
-  Sets the frequency at which the output is updated and published.  
-  The input pointclouds should be publishing faster or at an equal rate to this frequency.  
-  If an input pointclouds is not received anew before a new update cycle, the previous value will be used.  
+* `hz` - [double]
+  Sets the frequency at which the output is updated and published.
+  The input pointclouds should be publishing faster or at an equal rate to this frequency.
+  If an input pointclouds is not received anew before a new update cycle, the previous value will be used.
   Default value: `10.0`.
+* `time_threshold` - [double]
+  Sets the maximum time difference allowed between pointcloud timestamps for synchronization and fusion.
+  Pointclouds with timestamps exceeding this threshold from the reference cloud will not be included in the concatenation.
+  Default value: `0.1` seconds.
