@@ -7,6 +7,9 @@ This package provides a node which can be used for concatenating several pointcl
 Up to 4 pointclouds can be concatenated at once.
 If you need more pointclouds to be concatenated, then you can probably chain the output of this node into a second `pointcloud_concatenate` node.
 
+![Lidars Fusion](lidars_fuse.gif){width=250px}
+
+
 ### **Dependencies**
 
 This package depends on the following libraries
