@@ -186,6 +186,8 @@ void PointcloudConcatenate::update() {
 
     // Publish the concatenated pointcloud
     if (success) {
+      // Use cloud 1 timestamp for the output pointcloud
+      cloud_out.header.stamp = cloud_in1_timestamp;
       publishPointcloud(cloud_out);
     }
   }
