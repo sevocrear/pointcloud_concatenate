@@ -2,7 +2,8 @@
 
 ## `pointcloud_concatenate`
 
-This package provides a node which can be used for concatenating several pointclouds into one.
+This package provides a ROS node which can be used for concatenating several pointclouds into one.
+For a ROS2 version of this node, check out [this ROS2 fork](https://github.com/nino192/ros2_pointcloud_concatenate/tree/ros2).
 
 Up to 4 pointclouds can be concatenated at once.
 If you need more pointclouds to be concatenated, then you can probably chain the output of this node into a second `pointcloud_concatenate` node.
