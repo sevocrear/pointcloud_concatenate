@@ -112,7 +112,7 @@ bool PointcloudConcatenate::checkTimeThresholdOk(ros::Time& reference_time, ros:
 
 void PointcloudConcatenate::concatenate_with_reference_cloud(sensor_msgs::PointCloud2& reference_cloud, const sensor_msgs::PointCloud2 cloud_to_concat, bool& success, bool& cloud_received_recent, ros::Time& reference_time, ros::Time& current_time, const int& cloud_index, const bool& update_reference_time) {
   // ROS_INFO cloud idx
-  ROS_INFO("Concatenating cloud %d", cloud_index);
+  // ROS_INFO("Concatenating cloud %d", cloud_index);
   if (param_clouds_ >= cloud_index && success && cloud_received_recent) {
       // Warn if cloud was not received since last update
       if (!cloud_received_recent) {
@@ -130,24 +130,24 @@ void PointcloudConcatenate::concatenate_with_reference_cloud(sensor_msgs::PointC
         sensor_msgs::PointCloud2 transformed_cloud;
         // Transform pointcloud to the target frame if needed
         if (cloud_to_concat.header.frame_id != param_frame_target_) {
-          ROS_INFO("Transforming cloud %d from %s to %s", cloud_index, cloud_to_concat.header.frame_id.c_str(), param_frame_target_.c_str());
+          // ROS_INFO("Transforming cloud %d from %s to %s", cloud_index, cloud_to_concat.header.frame_id.c_str(), param_frame_target_.c_str());
           success = pcl_ros::transformPointCloud(param_frame_target_, cloud_to_concat, transformed_cloud, *tfBuffer);
           if (!success) {
             ROS_WARN("Transforming cloud %d from %s to %s failed!", cloud_index, cloud_to_concat.header.frame_id.c_str(), param_frame_target_.c_str());
             return;
           }
         } else {
-          ROS_INFO("Cloud %d is already in the target frame", cloud_index);
+          // ROS_INFO("Cloud %d is already in the target frame", cloud_index);
           transformed_cloud = cloud_to_concat;
         }
         // For the first cloud, set the header and assign directly
         if (update_reference_time) {
           reference_cloud = transformed_cloud;
-          ROS_INFO("Cloud %d is the first cloud. Taken as reference", cloud_index);
+          // ROS_INFO("Cloud %d is the first cloud. Taken as reference", cloud_index);
         } else {
           // Concatenate the pointclouds (all in the same frame now)
           pcl::concatenatePointCloud(reference_cloud, transformed_cloud, reference_cloud);
-          ROS_INFO("Cloud %d is concatenated with the reference cloud wrt the target frame: %s", cloud_index, param_frame_target_.c_str());
+          // ROS_INFO("Cloud %d is concatenated with the reference cloud wrt the target frame: %s", cloud_index, param_frame_target_.c_str());
         }
       }
     }
