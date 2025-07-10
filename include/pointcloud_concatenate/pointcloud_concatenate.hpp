@@ -41,7 +41,7 @@ private:
   void subCallbackCloudIn3(sensor_msgs::PointCloud2 msg);
   void subCallbackCloudIn4(sensor_msgs::PointCloud2 msg);
   void publishPointcloud(sensor_msgs::PointCloud2 cloud);
-  bool checkTimeThreshold(ros::Time& reference_time, ros::Time& current_time, const int& cloud_index);
+  bool checkTimeThresholdOk(ros::Time& reference_time, ros::Time& current_time, const int& cloud_index);
   void concatenate_with_reference_cloud(sensor_msgs::PointCloud2& reference_cloud, const sensor_msgs::PointCloud2 cloud_to_concat, bool& success, bool& cloud_received_recent, ros::Time& reference_time, ros::Time& current_time, const int& cloud_index, const bool& update_reference_time = false);
   // Private variables and objects
   ros::NodeHandle nh_;
