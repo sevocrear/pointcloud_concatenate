@@ -43,6 +43,7 @@ private:
   void publishPointcloud(sensor_msgs::PointCloud2 cloud);
   bool checkTimeThreshold(ros::Time& reference_time, ros::Time& current_time, const int& cloud_index);
   void concatenate_with_reference_cloud(sensor_msgs::PointCloud2& reference_cloud, const sensor_msgs::PointCloud2 cloud_to_concat, bool& success, bool& cloud_received_recent, ros::Time& reference_time, ros::Time& current_time, const int& cloud_index, const bool& update_reference_time = false);
+  void filterPointsByHeight(sensor_msgs::PointCloud2& cloud, double max_height);
   // Private variables and objects
   ros::NodeHandle nh_;
   std::string node_name_;
@@ -52,6 +53,7 @@ private:
   int param_clouds_;
   double param_hz_;
   double param_time_threshold_;
+  double max_height_z_;
   // Publisher and subscribers
   ros::Subscriber sub_cloud_in1 = nh_.subscribe("cloud_in1", 1, &PointcloudConcatenate::subCallbackCloudIn1, this);
   ros::Subscriber sub_cloud_in2 = nh_.subscribe("cloud_in2", 1, &PointcloudConcatenate::subCallbackCloudIn2, this);

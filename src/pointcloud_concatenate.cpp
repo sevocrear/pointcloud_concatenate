@@ -1,4 +1,6 @@
 #include "pointcloud_concatenate/pointcloud_concatenate.hpp"
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/filters/passthrough.h>
 
 // Constructor
 PointcloudConcatenate::PointcloudConcatenate(ros::NodeHandle& nh, ros::NodeHandle& pnh) {
@@ -98,6 +100,13 @@ void PointcloudConcatenate::handleParams() {
     ROSPARAM_WARN(param_name, param_time_threshold_);
   }
 
+  // Max height
+  param_name = node_name_ + "/max_height_z";
+  if (!ros::param::get(param_name, max_height_z_)) {
+    max_height_z_ = 10;
+    ROSPARAM_WARN(param_name, max_height_z_);
+  }
+
   ROS_INFO("Parameters loaded.");
 }
 
@@ -184,6 +193,11 @@ void PointcloudConcatenate::update() {
     // Concatenate the fourth pointcloud
     this->concatenate_with_reference_cloud(cloud_out, cloud_in4, success, cloud_in4_received_recent, reference_time, cloud_in4_timestamp, 4, false);
 
+    // remove points higher than max_height_z from cloud_out
+    if (success && cloud_out.data.size() > 0) {
+      filterPointsByHeight(cloud_out, max_height_z_);
+    }
+    
     // Publish the concatenated pointcloud
     if (success) {
       // Use cloud 1 timestamp for the output pointcloud
@@ -191,6 +205,31 @@ void PointcloudConcatenate::update() {
       publishPointcloud(cloud_out);
     }
   }
+}
+
+void PointcloudConcatenate::filterPointsByHeight(sensor_msgs::PointCloud2& cloud, double max_height) {
+  // Filter out points above max_height_z from the pointcloud
+  
+  // Convert ROS PointCloud2 to PCL PointCloud
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::fromROSMsg(cloud, *pcl_cloud);
+  
+  // Apply height filter using PassThrough filter
+  pcl::PassThrough<pcl::PointXYZ> pass;
+  pass.setInputCloud(pcl_cloud);
+  pass.setFilterFieldName("z");
+  pass.setFilterLimits(-std::numeric_limits<double>::max(), max_height);
+  pass.setNegative(false); // Keep points within limits
+  
+  // Create filtered cloud
+  pcl::PointCloud<pcl::PointXYZ>::Ptr filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+  pass.filter(*filtered_cloud);
+  
+  // Convert back to ROS PointCloud2
+  pcl::toROSMsg(*filtered_cloud, cloud);
+  
+  ROS_DEBUG("Filtered pointcloud: %zu points remaining (removed points above %.2f)", 
+            filtered_cloud->points.size(), max_height);
 }
 
 void PointcloudConcatenate::publishPointcloud(sensor_msgs::PointCloud2 cloud) {
